@@ -115,6 +115,7 @@ const navItems = [
   { id: "process", label: "How It Works" },
   { id: "contact", label: "Contact" },
 ];
+import emailjs from "@emailjs/browser";
 
 function ContactForm() {
   const [form, setForm] = useState({
@@ -125,10 +126,36 @@ function ContactForm() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setError("");
+
+    try {
+      await emailjs.send(
+        "YOUR_SERVICE_ID",
+        "YOUR_TEMPLATE_ID",
+        {
+          to_email: "hamdanshomemaintenance@gmail.com",
+          from_name: form.name,
+          from_email: form.email,
+          phone: form.phone,
+          service: form.service,
+          message: form.message,
+        },
+        "YOUR_PUBLIC_KEY"
+      );
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Email sending failed:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -137,12 +164,14 @@ function ContactForm() {
         <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
           <CheckCircle size={32} className="text-accent" />
         </div>
+
         <h3
           className="text-2xl font-extrabold text-foreground"
           style={{ fontFamily: "Manrope, sans-serif" }}
         >
           Message Sent!
         </h3>
+
         <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
           Thanks for reaching out. We'll get back to you within 24 hours with
           your free estimate.
@@ -170,6 +199,7 @@ function ContactForm() {
             className={inputClass}
           />
         </div>
+
         <div>
           <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
             Phone
@@ -183,6 +213,7 @@ function ContactForm() {
           />
         </div>
       </div>
+
       <div>
         <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
           Email
@@ -196,6 +227,7 @@ function ContactForm() {
           className={inputClass}
         />
       </div>
+
       <div>
         <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
           Service Needed
@@ -214,6 +246,7 @@ function ContactForm() {
           <option>Other</option>
         </select>
       </div>
+
       <div>
         <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
           Project Details
@@ -227,16 +260,26 @@ function ContactForm() {
           className={`${inputClass} resize-none`}
         />
       </div>
+
+      {error && (
+        <p className="text-sm text-red-500 text-center">
+          {error}
+        </p>
+      )}
+
       <button
         type="submit"
-        className="bg-primary text-primary-foreground font-bold py-4 rounded-lg hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm tracking-wide"
+        disabled={sending}
+        className="bg-primary text-primary-foreground font-bold py-4 rounded-lg hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm tracking-wide disabled:opacity-60"
         style={{ fontFamily: "Manrope, sans-serif" }}
       >
-        Send Request <ChevronRight size={16} />
+        {sending ? "Sending..." : "Send Request"}
+        {!sending && <ChevronRight size={16} />}
       </button>
     </form>
   );
 }
+
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
