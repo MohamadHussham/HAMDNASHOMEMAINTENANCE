@@ -124,11 +124,50 @@ function ContactForm() {
     service: "",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+
+    setSending(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setSubmitted(true);
+
+      setForm({
+        name: "",
+        phone: "",
+        email: "",
+        service: "",
+        message: "",
+      });
+    } catch (err) {
+      console.error("Contact form error:", err);
+
+      setError(
+        "We couldn't send your request. Please call us at 617-368-0505."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -137,19 +176,146 @@ function ContactForm() {
         <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
           <CheckCircle size={32} className="text-accent" />
         </div>
+
         <h3
           className="text-2xl font-extrabold text-foreground"
           style={{ fontFamily: "Manrope, sans-serif" }}
         >
           Message Sent!
         </h3>
+
         <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
           Thanks for reaching out. We'll get back to you within 24 hours with
           your free estimate.
         </p>
+
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="text-sm font-bold text-primary hover:underline"
+        >
+          Send another request
+        </button>
       </div>
     );
   }
+
+  const inputClass =
+    "w-full bg-input-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/40 transition-colors";
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            required
+            placeholder="John Smith"
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+            className={inputClass}
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+            Phone
+          </label>
+
+          <input
+            type="tel"
+            placeholder="(513) 000-0000"
+            value={form.phone}
+            onChange={(e) =>
+              setForm({ ...form, phone: e.target.value })
+            }
+            className={inputClass}
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+          Email
+        </label>
+
+        <input
+          type="email"
+          required
+          placeholder="you@email.com"
+          value={form.email}
+          onChange={(e) =>
+            setForm({ ...form, email: e.target.value })
+          }
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+          Service Needed
+        </label>
+
+        <select
+          value={form.service}
+          onChange={(e) =>
+            setForm({ ...form, service: e.target.value })
+          }
+          className={inputClass}
+        >
+          <option value="">Select a service...</option>
+          <option>Painting</option>
+          <option>Drywall Repair / Installation</option>
+          <option>Furniture Assembly</option>
+          <option>General Installation</option>
+          <option>Multiple Services</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+          Project Details
+        </label>
+
+        <textarea
+          required
+          rows={4}
+          placeholder="Describe your project — what needs to be done, approximate size, any special requirements..."
+          value={form.message}
+          onChange={(e) =>
+            setForm({ ...form, message: e.target.value })
+          }
+          className={`${inputClass} resize-none`}
+        />
+      </div>
+
+      {error && (
+        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={sending}
+        className="bg-primary text-primary-foreground font-bold py-4 rounded-lg hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
+        style={{ fontFamily: "Manrope, sans-serif" }}
+      >
+        {sending ? "Sending..." : "Send Request"}
+
+        {!sending && <ChevronRight size={16} />}
+      </button>
+    </form>
+  );
+}
+
 
   const inputClass =
     "w-full bg-input-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/40 transition-colors";
