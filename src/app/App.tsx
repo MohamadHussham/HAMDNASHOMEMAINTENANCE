@@ -830,7 +830,7 @@ export default function App() {
             </a>
           </div>
           <p className="text-primary-foreground/35 text-xs">
-            © 2025 Hamdan's Home Maintenance
+            © 2025 Hamdans Home Maintenance
           </p>
         </div>
       </footer>
