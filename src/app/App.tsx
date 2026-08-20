@@ -161,7 +161,6 @@ function ContactForm() {
       });
     } catch (err) {
       console.error("Contact form error:", err);
-
       setError(
         "We couldn't send your request. Please call us at 617-368-0505."
       );
@@ -309,96 +308,7 @@ function ContactForm() {
         style={{ fontFamily: "Manrope, sans-serif" }}
       >
         {sending ? "Sending..." : "Send Request"}
-
         {!sending && <ChevronRight size={16} />}
-      </button>
-    </form>
-  );
-}
-
-
-  const inputClass =
-    "w-full bg-input-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/40 transition-colors";
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-            Full Name
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="John Smith"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-            Phone
-          </label>
-          <input
-            type="tel"
-            placeholder="(513) 000-0000"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            className={inputClass}
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-          Email
-        </label>
-        <input
-          type="email"
-          required
-          placeholder="you@email.com"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-          Service Needed
-        </label>
-        <select
-          value={form.service}
-          onChange={(e) => setForm({ ...form, service: e.target.value })}
-          className={inputClass}
-        >
-          <option value="">Select a service...</option>
-          <option>Painting</option>
-          <option>Drywall Repair / Installation</option>
-          <option>Furniture Assembly</option>
-          <option>General Installation</option>
-          <option>Multiple Services</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-          Project Details
-        </label>
-        <textarea
-          required
-          rows={4}
-          placeholder="Describe your project — what needs to be done, approximate size, any special requirements..."
-          value={form.message}
-          onChange={(e) => setForm({ ...form, message: e.target.value })}
-          className={`${inputClass} resize-none`}
-        />
-      </div>
-      <button
-        type="submit"
-        className="bg-primary text-primary-foreground font-bold py-4 rounded-lg hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm tracking-wide"
-        style={{ fontFamily: "Manrope, sans-serif" }}
-      >
-        Send Request <ChevronRight size={16} />
       </button>
     </form>
   );
