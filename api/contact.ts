@@ -2,58 +2,34 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req: Request) {
+export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      {
-        status: 405,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
   }
 
   try {
-    const body = await req.json();
+    const { name, phone, email, service, message } = req.body;
 
     console.log("Contact form received:", {
-      name: body.name,
-      email: body.email,
-      service: body.service,
+      name,
+      email,
+      service,
     });
 
-    const { name, phone, email, service, message } = body;
-
     if (!name || !email || !message) {
-      return new Response(
-        JSON.stringify({
-          error: "Please fill in all required fields.",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return res.status(400).json({
+        error: "Name, email, and project details are required.",
+      });
     }
 
     if (!process.env.RESEND_API_KEY) {
       console.error("RESEND_API_KEY is missing");
 
-      return new Response(
-        JSON.stringify({
-          error: "Email service is not configured.",
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return res.status(500).json({
+        error: "Email service is not configured.",
+      });
     }
 
     const result = await resend.emails.send({
@@ -64,13 +40,15 @@ export default async function handler(req: Request) {
       html: `
         <h2>New Estimate Request</h2>
 
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Service:</strong> ${service || "Not specified"}</p>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Service:</strong> ${escapeHtml(service || "Not specified")}</p>
 
         <h3>Project Details</h3>
-        <p>${message}</p>
+        <p style="white-space: pre-wrap;">
+          ${escapeHtml(message)}
+        </p>
       `,
     });
 
@@ -79,44 +57,29 @@ export default async function handler(req: Request) {
     if (result.error) {
       console.error("Resend error:", result.error);
 
-      return new Response(
-        JSON.stringify({
-          error: result.error.message || "Email failed to send.",
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return res.status(500).json({
+        error: result.error.message || "Email failed to send.",
+      });
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return res.status(200).json({
+      success: true,
+    });
   } catch (error) {
     console.error("API error:", error);
 
-    return new Response(
-      JSON.stringify({
-        error: "Failed to send email.",
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return res.status(500).json({
+      error: "Failed to send email.",
+    });
   }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
