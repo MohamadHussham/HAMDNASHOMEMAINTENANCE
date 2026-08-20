@@ -412,10 +412,10 @@ export default function App() {
             ))}
             <div className="flex flex-col gap-2 pt-2 border-t border-border">
               <a
-                href="tel:6173680505"
+                href="tel:0016173680505"
                 className="flex items-center gap-2 text-sm font-bold text-primary"
               >
-                <Phone size={14} /> 617-368-0505
+                <Phone size={14} /> +1 (617-368-0505)
               </a>
               <button
                 onClick={() => scrollTo("contact")}
@@ -718,11 +718,11 @@ export default function App() {
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <a
-              href="tel:6173680505"
+              href="tel:0016173680505"
               className="bg-white text-accent font-bold px-7 py-4 rounded-lg hover:bg-white/90 transition-colors flex items-center gap-2 text-sm"
               style={{ fontFamily: "Manrope, sans-serif" }}
             >
-              <Phone size={15} /> 617-368-0505
+              <Phone size={15} /> +1 (617-368-0505)
             </a>
             <button
               onClick={() => scrollTo("contact")}
@@ -818,10 +818,10 @@ export default function App() {
           </div>
           <div className="flex gap-6 text-sm text-primary-foreground/60">
             <a
-              href="tel:6173680505"
+              href="tel:0016173680505"
               className="hover:text-primary-foreground transition-colors"
             >
-              617-368-0505
+              +1 (617-368-0505)
             </a>
             <a
               href="mailto:hamdanshomemaintenance@gmail.com"
