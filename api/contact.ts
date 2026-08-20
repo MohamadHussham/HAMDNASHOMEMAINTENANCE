@@ -2,9 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(
-  req: Request
-): Promise<Response> {
+export default async function handler(req: Request) {
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({ error: "Method not allowed" }),
@@ -18,15 +16,7 @@ export default async function handler(
   }
 
   try {
-    const body = await req.json();
-
-    const {
-      name,
-      phone,
-      email,
-      service,
-      message,
-    } = body;
+    const { name, phone, email, service, message } = await req.json();
 
     if (!name || !email || !message) {
       return new Response(
@@ -43,59 +33,32 @@ export default async function handler(
     }
 
     const { error } = await resend.emails.send({
-      from: "Website Contact <onboarding@resend.dev>",
+      from: "Hamdan's Home Maintenance <onboarding@resend.dev>",
       to: ["hamdanshomemaintenance@gmail.com"],
       replyTo: email,
       subject: `New Estimate Request - ${name}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-          <h2 style="color: #1f2937;">
-            New Estimate Request
-          </h2>
+        <h2>New Estimate Request</h2>
 
-          <hr />
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Service:</strong> ${escapeHtml(
+          service || "Not specified"
+        )}</p>
 
-          <p>
-            <strong>Name:</strong> ${escapeHtml(name)}
-          </p>
-
-          <p>
-            <strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}
-          </p>
-
-          <p>
-            <strong>Email:</strong> ${escapeHtml(email)}
-          </p>
-
-          <p>
-            <strong>Service:</strong> ${escapeHtml(
-              service || "Not specified"
-            )}
-          </p>
-
-          <h3>Project Details</h3>
-
-          <p style="white-space: pre-wrap;">
-            ${escapeHtml(message)}
-          </p>
-
-          <hr />
-
-          <p style="color: #6b7280; font-size: 12px;">
-            This message was submitted through
-            Hamdan's Home Maintenance website.
-          </p>
-        </div>
+        <h3>Project Details</h3>
+        <p style="white-space: pre-wrap;">
+          ${escapeHtml(message)}
+        </p>
       `,
     });
 
     if (error) {
-      console.error("Resend error:", error);
+      console.error(error);
 
       return new Response(
-        JSON.stringify({
-          error: "Unable to send email.",
-        }),
+        JSON.stringify({ error: "Email could not be sent." }),
         {
           status: 500,
           headers: {
@@ -106,9 +69,7 @@ export default async function handler(
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-      }),
+      JSON.stringify({ success: true }),
       {
         status: 200,
         headers: {
@@ -117,12 +78,10 @@ export default async function handler(
       }
     );
   } catch (error) {
-    console.error("API error:", error);
+    console.error(error);
 
     return new Response(
-      JSON.stringify({
-        error: "Something went wrong.",
-      }),
+      JSON.stringify({ error: "Something went wrong." }),
       {
         status: 500,
         headers: {
