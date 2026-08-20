@@ -16,12 +16,20 @@ export default async function handler(req: Request) {
   }
 
   try {
-    const { name, phone, email, service, message } = await req.json();
+    const body = await req.json();
+
+    console.log("Contact form received:", {
+      name: body.name,
+      email: body.email,
+      service: body.service,
+    });
+
+    const { name, phone, email, service, message } = body;
 
     if (!name || !email || !message) {
       return new Response(
         JSON.stringify({
-          error: "Name, email, and project details are required.",
+          error: "Please fill in all required fields.",
         }),
         {
           status: 400,
@@ -32,7 +40,23 @@ export default async function handler(req: Request) {
       );
     }
 
-    const { error } = await resend.emails.send({
+    if (!process.env.RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is missing");
+
+      return new Response(
+        JSON.stringify({
+          error: "Email service is not configured.",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const result = await resend.emails.send({
       from: "Hamdan's Home Maintenance <onboarding@resend.dev>",
       to: ["hamdanshomemaintenance@gmail.com"],
       replyTo: email,
@@ -40,25 +64,25 @@ export default async function handler(req: Request) {
       html: `
         <h2>New Estimate Request</h2>
 
-        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-        <p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p>
-        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Service:</strong> ${escapeHtml(
-          service || "Not specified"
-        )}</p>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Service:</strong> ${service || "Not specified"}</p>
 
         <h3>Project Details</h3>
-        <p style="white-space: pre-wrap;">
-          ${escapeHtml(message)}
-        </p>
+        <p>${message}</p>
       `,
     });
 
-    if (error) {
-      console.error(error);
+    console.log("Resend result:", result);
+
+    if (result.error) {
+      console.error("Resend error:", result.error);
 
       return new Response(
-        JSON.stringify({ error: "Email could not be sent." }),
+        JSON.stringify({
+          error: result.error.message || "Email failed to send.",
+        }),
         {
           status: 500,
           headers: {
@@ -69,7 +93,9 @@ export default async function handler(req: Request) {
     }
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({
+        success: true,
+      }),
       {
         status: 200,
         headers: {
@@ -78,10 +104,12 @@ export default async function handler(req: Request) {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error("API error:", error);
 
     return new Response(
-      JSON.stringify({ error: "Something went wrong." }),
+      JSON.stringify({
+        error: "Failed to send email.",
+      }),
       {
         status: 500,
         headers: {
@@ -90,14 +118,5 @@ export default async function handler(req: Request) {
       }
     );
   }
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
