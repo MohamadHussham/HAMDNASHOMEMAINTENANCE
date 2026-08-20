@@ -809,7 +809,7 @@ export default function App() {
               className="font-extrabold text-sm tracking-tight"
               style={{ fontFamily: "Manrope, sans-serif" }}
             >
-              HAMDANS HOME MAINTENANCE LLC
+              HAMDANS  HOME  MAINTENANCE  LLC
             </p>
             <p className="text-primary-foreground/50 text-xs mt-1">
               Cincinnati Area · Licensed & Insured
