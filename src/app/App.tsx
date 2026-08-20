@@ -136,18 +136,32 @@ function ContactForm() {
     setError("");
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        "https://formspree.io/f/xkjwkeln",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name,
+            phone: form.phone,
+            email: form.email,
+            service: form.service,
+            message: form.message,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to send message");
+        throw new Error(
+          data?.errors?.[0]?.message ||
+            data?.error ||
+            "Failed to send message"
+        );
       }
 
       setSubmitted(true);
@@ -161,6 +175,7 @@ function ContactForm() {
       });
     } catch (err) {
       console.error("Contact form error:", err);
+
       setError(
         "We couldn't send your request. Please call us at 617-368-0505."
       );
@@ -313,6 +328,7 @@ function ContactForm() {
     </form>
   );
 }
+
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
