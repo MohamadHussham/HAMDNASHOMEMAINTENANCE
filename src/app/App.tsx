@@ -458,7 +458,7 @@ export default function App() {
               Get a Free Estimate <ChevronRight size={16} />
             </button>
             <a
-              href="tel:6173680505"
+              href="tel:0016173680505"
               className="border-2 border-primary text-primary font-bold px-8 py-4 rounded-lg hover:bg-primary/5 transition-all flex items-center gap-2 text-sm"
               style={{ fontFamily: "Manrope, sans-serif" }}
             >
@@ -722,7 +722,7 @@ export default function App() {
               className="bg-white text-accent font-bold px-7 py-4 rounded-lg hover:bg-white/90 transition-colors flex items-center gap-2 text-sm"
               style={{ fontFamily: "Manrope, sans-serif" }}
             >
-              <Phone size={15} /> +1 (617-368-0505)
+              <Phone size={17} /> +1 (617-368-0505)
             </a>
             <button
               onClick={() => scrollTo("contact")}
@@ -753,7 +753,7 @@ export default function App() {
               hours with a clear, no-obligation quote.
             </p>
             <div className="flex flex-col gap-5">
-              <a href="tel:6173680505" className="flex items-center gap-4 group">
+              <a href="tel:0016173680505" className="flex items-center gap-4 group">
                 <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors shrink-0">
                   <Phone size={17} className="text-accent" />
                 </div>
@@ -762,7 +762,7 @@ export default function App() {
                     Phone
                   </p>
                   <p className="text-sm font-bold text-foreground mt-0.5">
-                    617-368-0505
+                    +1 (617-368-0505)
                   </p>
                 </div>
               </a>
