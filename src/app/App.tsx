@@ -345,59 +345,58 @@ export default function App() {
     >
       {/* NAV */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <button
-            onClick={() => scrollTo("hero")}
-            className="flex flex-col leading-tight text-left"
-          >
-            <span
-              className="text-primary font-extrabold text-base tracking-tight"
-              style={{ fontFamily: "Manrope, sans-serif" }}
-            >
-              HAMDAN'S
-            </span>
-            <span className="text-muted-foreground text-[10px] tracking-[0.18em] uppercase">
-              Home Maintenance
-            </span>
-          </button>
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
 
-          <nav className="hidden md:flex items-center gap-7">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
+    <button
+      onClick={() => scrollTo("hero")}
+      className="flex items-center shrink-0"
+      aria-label="Hamdan's Home Maintenance"
+    >
+      <img
+        src="/logo.png"
+        alt="Hamdan's Home Maintenance LLC"
+        className="h-16 sm:h-[68px] w-auto object-contain"
+      />
+    </button>
 
-          <div className="flex items-center gap-4">
-            <a
-              href="tel:6173680505"
-              className="hidden md:flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/75 transition-colors"
-              style={{ fontFamily: "Manrope, sans-serif" }}
-            >
-              <Phone size={14} />
-              617-368-0505
-            </a>
-            <button
-              onClick={() => scrollTo("contact")}
-              className="hidden md:block bg-accent text-accent-foreground text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-accent/90 transition-colors"
-              style={{ fontFamily: "Manrope, sans-serif" }}
-            >
-              Free Estimate
-            </button>
-            <button
-              className="md:hidden text-foreground"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
+    <nav className="hidden md:flex items-center gap-7">
+      {navItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => scrollTo(item.id)}
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {item.label}
+        </button>
+      ))}
+    </nav>
+
+    <div className="flex items-center gap-4">
+      <a
+        href="tel:0016173680505"
+        className="hidden md:flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/75 transition-colors"
+      >
+        <Phone size={14} />
+        +1 (617-368-0505)
+      </a>
+
+      <button
+        onClick={() => scrollTo("contact")}
+        className="hidden md:block bg-accent text-accent-foreground text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-accent/90 transition-colors"
+      >
+        Free Estimate
+      </button>
+
+      <button
+        className="md:hidden text-foreground"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+      </button>
+    </div>
+
+  </div>
 
         {mobileMenuOpen && (
           <div className="md:hidden bg-background border-t border-border px-6 py-5 flex flex-col gap-4">
